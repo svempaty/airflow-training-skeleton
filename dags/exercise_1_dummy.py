@@ -17,7 +17,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-"""Example DAG demonstrating the usage of the BashOperator."""
+"""Exercise 1: dummy operator."""
 
 from datetime import timedelta
 
@@ -32,40 +32,37 @@ args = {
 }
 
 dag = DAG(
-    dag_id='example_bash_operator',
+    dag_id='exercise_1_dummy_operator',
     default_args=args,
-    schedule_interval='0 0 * * *',
-    dagrun_timeout=timedelta(minutes=60),
+    #schedule_interval=None, #'0 0 * * *',
+    #dagrun_timeout=timedelta(minutes=60),
 )
 
-run_this_last = DummyOperator(
-    task_id='run_this_last',
+t1 = DummyOperator(
+    task_id='t1',
     dag=dag,
 )
 
-# [START howto_operator_bash]
-run_this = BashOperator(
-    task_id='run_after_loop',
-    bash_command='echo 1',
+t2 = DummyOperator(
+    task_id='t2',
     dag=dag,
 )
-# [END howto_operator_bash]
 
-run_this >> run_this_last
-
-for i in range(3):
-    task = BashOperator(
-        task_id='runme_' + str(i),
-        bash_command='echo "{{ task_instance_key_str }}" && sleep 1',
-        dag=dag,
-    )
-    task >> run_this
-
-# [START howto_operator_bash_template]
-also_run_this = BashOperator(
-    task_id='also_run_this',
-    bash_command='echo "run_id={{ run_id }} | dag_run={{ dag_run }}"',
+t3 = DummyOperator(
+    task_id='t3',
     dag=dag,
 )
-# [END howto_operator_bash_template]
-also_run_this >> run_this_last
+
+t4 = DummyOperator(
+    task_id='t4',
+    dag=dag,
+)
+
+t5 = DummyOperator(
+    task_id='t5',
+    dag=dag,
+)
+
+t1 >> t2 >> t3 >> t5
+t2 >> t4 >> t5
+
